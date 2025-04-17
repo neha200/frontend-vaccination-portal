@@ -1,0 +1,283 @@
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 10; /* Ensure this is lower than the modal's z-index */
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+td {
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #e6f7ff;
+}
+
+/* Button Styling */
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #007bff;
+  color: #fff;
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Upload Section */
+.upload {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.upload input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.upload input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure the modal is on top of other elements */
+}
+
+.modalContent {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  width: 400px;
+  max-width: 90%;
+  z-index: 1001; /* Ensure the modal content is above the modal background */
+}
+
+.modalContent .buttonContainer {
+  display: flex;
+  justify-content: space-between; /* Space between the buttons */
+  margin-top: 1rem; /* Add spacing above the buttons */
+}
+
+.modalContent button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modalContent button:hover {
+  transform: scale(1.02);
+}
+
+.modalContent button:active {
+  transform: scale(0.98);
+}
+
+.modalContent button[type="button"] {
+  background-color: #dc3545; /* Red for Cancel */
+  color: white;
+}
+
+.modalContent button[type="button"]:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+.modalContent button[type="submit"] {
+  background-color: #007bff; /* Blue for Confirm */
+  color: white;
+}
+
+.modalContent button[type="submit"]:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form button {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+}
+
+.form button[type="button"] {
+  background-color: #dc3545;
+}
+
+.form button[type="button"]:hover {
+  background-color: #c82333;
+}
+
+/* Download Button Styling */
+.downloadButton {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+}
+
+.downloadButton:hover {
+  background-color: #0056b3;
+}
+
+/* Filters Styling */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters input[type="text"] {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filters input[type="text"]:focus {
+  border-color: #007bff;
+}
+
+.filters select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filters select:focus {
+  border-color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.9rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem;
+  }
+
+  .upload {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination .activePage {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}

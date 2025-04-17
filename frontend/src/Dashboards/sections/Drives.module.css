@@ -1,0 +1,219 @@
+/* Form Styling */
+.form {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 1.5rem;
+}
+
+.form input,
+.form button {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+  transform: scale(1.02);
+}
+
+.form button:active {
+  transform: scale(0.98);
+}
+
+.cancelBtn {
+  margin-left: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  background-color: #aaa;
+}
+
+.deleteBtn {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: #c82333;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+td {
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #e6f7ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  th,
+  td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Button Container Styling */
+.modalContent .buttonContainer {
+  display: flex;
+  justify-content: space-between; /* Space between the buttons */
+  margin-top: 1rem; /* Add spacing above the buttons */
+}
+
+.modalContent .buttonContainer button {
+  flex: 1; /* Ensure buttons have equal width */
+  margin: 0 0.5rem; /* Add spacing between buttons */
+}
+
+.createBtn {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.createBtn:hover {
+  background-color: #0056b3;
+}
+
+.submitBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.submitBtn:hover {
+  background-color: #218838;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination .activePage {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Styling for Disabled Buttons */
+button:disabled {
+  background-color: #e0e0e0; /* Light gray background for disabled state */
+  color: #a0a0a0; /* Gray text color */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
+  pointer-events: none; /* Prevent hover effects */
+  border: 1px solid #ddd; /* Keep a consistent border */
+}

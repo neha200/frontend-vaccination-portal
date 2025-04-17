@@ -1,0 +1,54 @@
+/* Reset and Base Styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #0056b3;
+}
+
+code {
+  font-family: 'Courier New', source-code-pro, Menlo, Monaco, Consolas, monospace;
+  background-color: #f4f4f4;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  color: #d63384;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}

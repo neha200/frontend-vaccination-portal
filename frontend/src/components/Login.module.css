@@ -1,0 +1,67 @@
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #f4f4f4; /* Optional: Add a light background color */
+}
+
+.loginForm {
+  width: 100%;
+  max-width: 400px; /* Limit the form width */
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loginForm h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.loginForm input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.loginForm button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.loginForm button:hover {
+  background-color: #0056b3;
+}
+
+.registerButton {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.registerButton:hover {
+  background-color: #0056b3;
+}
+
+.registerButton:active {
+  background-color: #004085;
+}
