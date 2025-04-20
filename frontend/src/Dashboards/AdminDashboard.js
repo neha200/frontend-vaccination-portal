@@ -152,7 +152,10 @@ const AdminDashboard = () => {
                 <ul>
                   {vaccinationDrives.map((drive) => (
                     <li key={drive._id}>
-                      {drive.vaccine_name} - {drive.date}
+                      {drive.vaccine_name} -{" "}
+                      {drive.date
+                        ? new Date(drive.date.$date || drive.date).toLocaleDateString()
+                        : "Invalid Date"}
                     </li>
                   ))}
                 </ul>

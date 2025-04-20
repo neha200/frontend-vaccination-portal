@@ -14,6 +14,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post("/login", form);
+      console.log(res)
       saveToken(res.data.access_token);
       const role = getRole();
       if (role === "admin") {

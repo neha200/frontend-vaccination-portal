@@ -37,12 +37,13 @@ const Students = () => {
     }
   };
 
-  const fetchVaccinationDrives = async () => {
+  const fetchVaccinationDrives = async (classGrade) => {
     try {
-      const res = await axios.get("/drives/vaccination_drives");
-      setVaccinationDrives(res.data);
-    } catch (err) {
-      console.error("Error fetching vaccination drives:", err);
+      const response = await axios.get(`/drives/by-class?class_grade=${classGrade}`);
+      setVaccinationDrives(response.data);
+    } catch (error) {
+      console.error("Error fetching drives:", error);
+      setVaccinationDrives([]);
     }
   };
 
@@ -69,20 +70,21 @@ const Students = () => {
     }
   };
 
-  const openVaccinationModal = (student) => {
-    setSelectedStudent(student);
-    fetchVaccinationDrives();
-    setIsVaccinationModalOpen(true);
-  };
-
   const openEditModal = (student) => {
     setEditStudent(student);
+    setSelectedStudent(student); // Set the selected student
     setIsEditModalOpen(true);
+  };
+
+  const openVaccinationDriveModal = (student) => {
+    setSelectedStudent(student); // Set the selected student
+    fetchVaccinationDrives(student.class_grade); // Fetch available vaccination drives
+    setIsVaccinationDriveModalOpen(true); // Open the vaccination drive modal
   };
 
   const handleVaccinate = async () => {
     if (!selectedDrive) {
-      alert("Please select a vaccination drive");
+      alert("Please select a vaccination drive.");
       return;
     }
 
@@ -110,15 +112,39 @@ const Students = () => {
     }
 
     try {
+      // Make the API call to update the student's vaccination status
       const res = await axios.put(`/students/${selectedStudent._id}/vaccinate`, {
         vaccine_name: selectedDrive.vaccine_name,
         date_of_vaccination: selectedDrive.date,
       });
-      alert(res.data.msg);
-      fetchStudents();
-      setIsVaccinationModalOpen(false);
-      setSelectedStudent(null);
-      setSelectedDrive("");
+
+      // Debugging log
+      console.log("Vaccination API response:", res.data);
+
+      if (res.status === 200) {
+        alert(res.data.msg);
+
+        // Update the frontend state
+        setStudents((prev) =>
+          prev.map((student) =>
+            student._id === selectedStudent._id
+              ? {
+                  ...student,
+                  is_vaccinated: true,
+                  vaccine_name: selectedDrive.vaccine_name,
+                  date_of_vaccination: selectedDrive.date,
+                }
+              : student
+          )
+        );
+
+        // Reset modal and selected data
+        setIsVaccinationModalOpen(false);
+        setSelectedStudent(null);
+        setSelectedDrive("");
+      } else {
+        alert("Failed to mark the student as vaccinated.");
+      }
     } catch (err) {
       console.error("Error vaccinating student:", err);
       alert("Failed to vaccinate student.");
@@ -133,7 +159,11 @@ const Students = () => {
     }));
 
     if (name === "is_vaccinated" && checked) {
-      fetchVaccinationDrives();
+      if (!editStudent.class_grade) {
+        alert("Please enter the student's class grade before selecting vaccination.");
+        return;
+      }
+      fetchVaccinationDrives(newStudent.class_grade);
       setIsVaccinationDriveModalOpen(true);
     }
   };
@@ -142,14 +172,13 @@ const Students = () => {
     e.preventDefault();
 
     // Validate student_id
-    const studentIdRegex = /^[a-zA-Z0-9]{6}$/; // Regex for exactly 6 alphanumeric characters
-    if (!studentIdRegex.test(editStudent.student_id)) {
+    if (!studentIdRegex.test(newStudent.student_id)) {
       alert("Student ID must be exactly 6 characters long and can only contain letters and numbers.");
       return;
     }
 
     // Validate class_grade
-    if (!classGradeRegex.test(editStudent.class_grade)) {
+    if (!classGradeRegex.test(newStudent.class_grade)) {
       alert(
         "Class Grade must be a number (1-12) followed by an uppercase letter (e.g., 1A, 12B) or a branch and class (e.g., CS101, ME202)."
       );
@@ -193,9 +222,14 @@ const Students = () => {
           date_of_vaccination: "N/A",
         }));
       } else {
-        // Close the edit modal and open the vaccination drive modal
+        // Set the selected student and open the vaccination drive modal
+        if (!editStudent.class_grade) {
+          alert("Please enter the student's class grade before selecting vaccination.");
+          return;
+        }
+        setSelectedStudent(editStudent); // Retain the selected student
         setIsEditModalOpen(false);
-        fetchVaccinationDrives();
+        fetchVaccinationDrives(editStudent.class_grade);
         setIsVaccinationDriveModalOpen(true);
       }
     } else {
@@ -238,20 +272,50 @@ const Students = () => {
   };
 
   const handleEditVaccinationDriveSelect = () => {
+    console.log("Selected Student:", selectedStudent); // Debug log
+
     if (!selectedDrive) {
       alert("Please select a vaccination drive.");
       return;
     }
 
-    setEditStudent((prev) => ({
-      ...prev,
-      vaccine_name: selectedDrive.vaccine_name,
-      date_of_vaccination: selectedDrive.date,
-      is_vaccinated: true,
-    }));
+    const currentDate = new Date();
+    const driveDate = new Date(selectedDrive.date);
 
+    // Validate that the selected drive is not in the future
+    if (driveDate > currentDate) {
+      alert(
+        "The selected vaccination drive date is in the future. You cannot mark the student as vaccinated until the drive is completed."
+      );
+      return;
+    }
+
+    // Ensure selectedStudent is not null
+    if (!selectedStudent) {
+      alert("No student selected. Please try again.");
+      return;
+    }
+
+    // Update the selected student's vaccination details
+    setStudents((prev) =>
+      prev.map((student) =>
+        student._id === selectedStudent._id
+          ? {
+              ...student,
+              vaccine_name: selectedDrive.vaccine_name,
+              date_of_vaccination: selectedDrive.date,
+              is_vaccinated: true,
+            }
+          : student
+      )
+    );
+
+    // Close the vaccination drive modal
     setIsVaccinationDriveModalOpen(false);
-    setIsEditModalOpen(true); // Reopen the edit modal
+    handleVaccinate(); // Call the vaccination function to update the backend
+    // Reset the selected drive and student
+    setSelectedDrive("");
+    setSelectedStudent(null);
   };
 
   useEffect(() => {
@@ -260,7 +324,7 @@ const Students = () => {
 
   const filteredStudents = students.filter((s) => {
     const matchesSearchQuery =
-      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.class_grade?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.student_id?.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -360,6 +424,7 @@ const Students = () => {
             <h3>Vaccinate {selectedStudent.username}</h3>
             {vaccinationDrives.length > 0 ? (
               <select
+                className={styles.modalSelect}
                 value={selectedDrive._id || ""}
                 onChange={(e) =>
                   setSelectedDrive(
@@ -370,7 +435,7 @@ const Students = () => {
                 <option value="">Select a Vaccination Drive</option>
                 {vaccinationDrives.map((drive) => (
                   <option key={drive._id} value={drive._id}>
-                    {drive.vaccine_name} - {drive.date}
+                    {drive.vaccine_name} - {drive.date ? new Date(drive.date).toLocaleDateString() : "Invalid Date"}
                   </option>
                 ))}
               </select>
@@ -388,12 +453,13 @@ const Students = () => {
       )}
 
       {/* Modal for Selecting Vaccination Drive */}
-      {isVaccinationDriveModalOpen && (
+      {isVaccinationDriveModalOpen && selectedStudent && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h3>Select Vaccination Drive</h3>
+            <h3 className={styles.modalHeader}>Select Vaccination Drive for {selectedStudent.username}</h3>
             {vaccinationDrives.length > 0 ? (
               <select
+                className={styles.modalSelect}
                 value={selectedDrive._id || ""}
                 onChange={(e) =>
                   setSelectedDrive(
@@ -402,17 +468,37 @@ const Students = () => {
                 }
               >
                 <option value="">Select a Vaccination Drive</option>
-                {vaccinationDrives.map((drive) => (
-                  <option key={drive._id} value={drive._id}>
-                    {drive.vaccine_name} - {drive.date}
-                  </option>
-                ))}
+                {vaccinationDrives
+                  .filter(
+                    (drive) =>
+                      Array.isArray(drive.classes) && // Ensure drive.classes is an array
+                      drive.classes.some((cls) => cls === selectedStudent.class_grade) // Check if student's class is one of the classes
+                  )
+                  .map((drive) => (
+                    <option key={drive._id} value={drive._id}>
+                      {drive.vaccine_name} - {drive.date ? new Date(drive.date).toLocaleDateString() : "Invalid Date"}
+                    </option>
+                  ))}
               </select>
             ) : (
-              <p>No upcoming drives</p>
+              <p className={styles.noDrivesText}>No upcoming drives</p>
             )}
-            <button onClick={handleEditVaccinationDriveSelect}>Confirm</button>
-            <button onClick={() => setIsVaccinationDriveModalOpen(false)}>Cancel</button>
+            <div className={styles.buttonContainer}>
+              <button
+                type="button"
+                className={styles.confirmButton}
+                onClick={handleEditVaccinationDriveSelect}
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => setIsVaccinationDriveModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -421,9 +507,10 @@ const Students = () => {
       {isEditModalOpen && editStudent && !isVaccinationDriveModalOpen && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h3>Edit Student Details</h3>
+            <h3 className={styles.modalHeader}>Edit Student Details</h3>
             <form onSubmit={handleEditSubmit} className={styles.form}>
               <input
+                className={styles.modalInput}
                 name="username"
                 value={editStudent.username || ""}
                 onChange={handleEditChange}
@@ -431,6 +518,7 @@ const Students = () => {
                 required
               />
               <input
+                className={styles.modalInput}
                 name="class_grade"
                 value={editStudent.class_grade || ""}
                 onChange={handleEditChange}
@@ -438,13 +526,13 @@ const Students = () => {
                 required
               />
               <input
+                className={styles.modalInput}
                 name="student_id"
                 value={editStudent.student_id || ""}
                 onChange={handleEditChange}
                 placeholder="Student ID"
                 required
               />
-              <label>
                 <input
                   type="checkbox"
                   name="is_vaccinated"
@@ -452,10 +540,10 @@ const Students = () => {
                   onChange={handleEditChange}
                 />
                 Is Vaccinated
-              </label>
               {editStudent.is_vaccinated && (
                 <>
                   <input
+                    className={styles.modalInput}
                     name="vaccine_name"
                     value={editStudent.vaccine_name || ""}
                     onChange={handleEditChange}
@@ -463,6 +551,7 @@ const Students = () => {
                     required
                   />
                   <input
+                    className={styles.modalInput}
                     type="date"
                     name="date_of_vaccination"
                     value={editStudent.date_of_vaccination || ""}
@@ -471,10 +560,21 @@ const Students = () => {
                   />
                 </>
               )}
-              <button type="submit">Save</button>
-              <button type="button" onClick={() => setIsEditModalOpen(false)}>
-                Cancel
-              </button>
+              <div className={styles.buttonContainer}>
+                <button
+                  type="submit"
+                  className={styles.confirmButton}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -494,24 +594,51 @@ const Students = () => {
         </thead>
         <tbody>
           {currentRows.map((s) => (
-            <tr key={s._id}>
-              <td>{s.name || s.username}</td>
-              <td>{s.class_grade}</td>
-              <td>{s.student_id || "N/A"}</td>
+            <tr key={s?._id}>
+              <td>{s?.username}</td>
+              <td>{s?.class_grade}</td>
+              <td>{s?.student_id || "N/A"}</td>
               <td>
                 <input
                   type="checkbox"
-                  checked={s.is_vaccinated}
-                  onChange={() => openEditModal(s)}
-                  disabled={!s.is_vaccinated}
+                  checked={s?.is_vaccinated}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      openVaccinationDriveModal(s); // Open the vaccination drive modal
+                    } else {
+                      const confirmReset = window.confirm(
+                        "Are you sure you want to unmark this student as vaccinated? This will reset their vaccination details."
+                      );
+                      if (confirmReset) {
+                        setStudents((prev) =>
+                          prev.map((student) =>
+                            student._id === s._id
+                              ? {
+                                  ...student,
+                                  is_vaccinated: false,
+                                  vaccine_name: "N/A",
+                                  date_of_vaccination: "N/A",
+                                }
+                              : student
+                          )
+                        );
+                      } else {
+                        fetchStudents(); // Refresh the student list to reset the state
+                      }
+                    }
+                  }}
                 />
               </td>
-              <td>{s.vaccine_name || "N/A"}</td>
-              <td>{s.date_of_vaccination || "N/A"}</td>
+              <td>{s?.vaccine_name || "N/A"}</td>
+              <td>
+                {s?.date_of_vaccination
+                  ? new Date(s.date_of_vaccination.$date || s.date_of_vaccination).toLocaleDateString()
+                  : "N/A"}
+              </td>
               <td>
                 <button onClick={() => openEditModal(s)}>Edit</button>
-                {!s.is_vaccinated && (
-                  <button onClick={() => openVaccinationModal(s)}>Mark Vaccinated</button>
+                {!s?.is_vaccinated && (
+                  <button onClick={() => openVaccinationDriveModal(s)}>Mark Vaccinated</button>
                 )}
               </td>
             </tr>

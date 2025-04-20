@@ -30,9 +30,9 @@ const Reports = () => {
         vaccinated_students: vaccinated.length,
       });
 
-      // Extract unique vaccine names
+      // Extract unique vaccine names, filtering out null or undefined values
       const uniqueVaccines = [
-        ...new Set(res.data.map((s) => s.vaccine_name).filter(Boolean)),
+        ...new Set(res.data.map((s) => s.vaccine_name).filter((name) => name)),
       ];
       setVaccineOptions(uniqueVaccines);
 
@@ -140,8 +140,8 @@ const Reports = () => {
           onChange={(e) => setFilters({ ...filters, vaccine: e.target.value })}
         >
           <option value="">All Vaccines</option>
-          {vaccineOptions.map((vaccine) => (
-            <option key={vaccine} value={vaccine}>
+          {vaccineOptions.map((vaccine, index) => (
+            <option key={index} value={vaccine}>
               {vaccine}
             </option>
           ))}
@@ -177,7 +177,11 @@ const Reports = () => {
               <td>{s.class_grade}</td>
               <td>{s.is_vaccinated ? "Yes" : "No"}</td>
               <td>{s.vaccine_name || "N/A"}</td>
-              <td>{s.date_of_vaccination || "N/A"}</td>
+              <td>
+                {s?.date_of_vaccination
+                  ? new Date(s.date_of_vaccination.$date || s.date_of_vaccination).toLocaleDateString()
+                  : "N/A"}
+              </td>
             </tr>
           ))}
         </tbody>

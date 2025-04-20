@@ -14,6 +14,7 @@ const Drives = () => {
   });
   const [editingDriveId, setEditingDriveId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const classGradeRegex = /^([1-9]|1[0-2])[A-Z]$|^[A-Z]{2,}[0-9]{2,}$/;
 
   const fetchDrives = async () => {
     try {
@@ -62,6 +63,12 @@ const Drives = () => {
         alert("The drive date must be at least 15 days from today.");
         return;
       }
+
+      // Validation: Prevent marking a future drive as completed
+      if (form.is_completed) {
+        alert("You cannot mark a drive as completed if the date is in the future.");
+        return;
+      }
     }
 
     // Validation: If the drive date is in the past, ensure "Mark as Completed" is checked
@@ -74,6 +81,16 @@ const Drives = () => {
     if (!Number.isInteger(Number(form.available_doses)) || form.available_doses <= 0) {
       alert("Available doses must be a positive integer greater than or equal to 1.");
       return;
+    }
+
+    const classesArray = form.classes.split(",").map((cls) => cls.trim());
+    for (const cls of classesArray) {
+      if (!classGradeRegex.test(cls)) {
+        alert(
+          "Each class must be a number (1-12) followed by an uppercase letter (e.g., 1A, 12B) or a branch and class (e.g., CS101, ME202)."
+        );
+        return;
+      }
     }
 
     try {
@@ -244,7 +261,9 @@ const Drives = () => {
           {currentRows.map((d) => (
             <tr key={d._id}>
               <td>{d.vaccine_name}</td>
-              <td>{d.date}</td>
+              <td>
+                {d.date ? new Date(d.date).toLocaleDateString() : "N/A"} {/* Format the date */}
+              </td>
               <td>{d.available_doses}</td>
               <td>{d.classes.join(", ")}</td>
               <td>{d.is_completed ? "Completed" : "Upcoming"}</td>
@@ -258,6 +277,7 @@ const Drives = () => {
                 <button
                   onClick={() => handleDelete(d._id)}
                   className={styles.deleteBtn}
+                  disabled={d.is_completed} // Disable the button if the drive is completed
                 >
                   Delete
                 </button>
