@@ -143,6 +143,7 @@ frontend/
 - `POST /drives`: Create a new drive.
 - `PUT /drives/<id>`: Update a drive.
 - `DELETE /drives/<id>`: Delete a drive.
+- `GET /by-class`: Filter out vaccination drives for student by class
 
 ### Analytics
 - `GET /analytics`: Fetch dashboard analytics.

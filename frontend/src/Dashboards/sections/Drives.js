@@ -96,7 +96,8 @@ const Drives = () => {
     try {
       if (editingDriveId) {
         // Update existing drive
-        await axios.put(`/drives/${editingDriveId}`, form);
+        console.log("Editing Drive ID:", editingDriveId); // Debugging
+        await axios.put(`/drives/${editingDriveId}`, form); // Use the correct `editingDriveId`
         alert("Drive updated successfully!");
       } else {
         // Create new drive
@@ -130,15 +131,22 @@ const Drives = () => {
       return;
     }
 
+    // Format the date to YYYY-MM-DD for the date input field
+    const formattedDate = drive.date
+      ? new Date(drive.date).toISOString().split("T")[0]
+      : "";
+
     // Populate the form with the selected drive's data
     setForm({
       vaccine_name: drive.vaccine_name,
-      date: drive.date,
+      date: formattedDate, // Use the formatted date
       available_doses: drive.available_doses,
       classes: drive.classes.join(","), // Convert array to comma-separated string
       is_completed: drive.is_completed, // Include the is_completed field
     });
-    setEditingDriveId(drive._id); // Use `_id` if the backend uses MongoDB ObjectId
+
+    // Set the editingDriveId to the drive's _id
+    setEditingDriveId(drive._id.$oid || drive._id); // Ensure this is a string
     setIsModalOpen(true); // Open the modal for editing
   };
 
